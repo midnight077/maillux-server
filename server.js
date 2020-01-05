@@ -10,5 +10,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use(cors())
 connectDB()
 const PORT = process.env.PORT || 8800
+app.use('/api/courses',require('./routes/courses'))
+app.use('/api/user',require('./routes/user'))
 
 app.listen(PORT,()=>console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`))
