@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const SubscriberSchema = new mongoose.Schema({
+exports.SubscriberSchema = new mongoose.Schema({
     name:{
         type: String,
         required: [true, 'Please add your name'],
@@ -18,15 +18,8 @@ const SubscriberSchema = new mongoose.Schema({
         type : Number,
         default : 1
     },
-    owner:{
-        type : mongoose.Schema.Types.ObjectId,
-        ref : 'Course',
-        select : false
-    },
     createdAt:{
         type:Date,
         default:Date.now
     }
 })
- 
-module.exports = mongoose.model('Subscriber', SubscriberSchema)
