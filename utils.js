@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken')
-exports.veryfyJWT = async token => {
+exports.verifyJWT = async token => {
     if (!token) {
         return {error : true, reason: 'no token provided' };
     }
