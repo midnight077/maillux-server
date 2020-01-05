@@ -17,6 +17,12 @@ const CourseSchema = new mongoose.Schema({
     content:{
         type : []
     },
+    subscribers:[
+        {
+            type:mongoose.Schema.Types.ObjectId,
+            ref:'Subscriber'
+        }
+    ],
     owner:{
         type : mongoose.Schema.Types.ObjectId,
         ref : 'User',
