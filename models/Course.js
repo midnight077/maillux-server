@@ -34,7 +34,7 @@ const CourseSchema = new mongoose.Schema({
     }
 })
 
-CourseSchema.pre('save', async next => {
+CourseSchema.pre('save', async function(next){
     if(this.format === 2)  this.content =  Array(this.duration).fill([{ material : '' }, { material : '' }])
     else this.content = Array(this.duration).fill([{ material : '' }])
     next()
