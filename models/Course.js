@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { SubscriberSchema } = require('../models/Subscriber')
 const CourseSchema = new mongoose.Schema({
     title:{
         type: String,
