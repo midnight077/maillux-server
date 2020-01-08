@@ -55,8 +55,13 @@ exports.verifySubscriber = async (req, res) => {
         if (s == course.subscribers.length) throw 'Subscriber not found!';
         const info = await sendVerificationSuccessfulMail(course,course.subscribers[s])
         console.log(info)
+     
+        if(timeCheck()) {
+            const info = await sendFirstMail(course, course.subscribers[s])
+            console.log(info)
+            course.subscribers[s].position += 1
+        }
         course.save();
-        //do first mail
         return res.end('Email verification Successful!');
     } catch (error) {
         console.log(error)
