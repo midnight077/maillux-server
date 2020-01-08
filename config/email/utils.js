@@ -20,3 +20,9 @@ exports.sendVerificationMail = async (course, subscriber) => {
     }/verify">Verify your email</a> first to get access to the course content.`;
     return postmail(subscriber.email, `Maillux : ${course.title}`, content);
 };
+
+exports.sendFirstMail = async (course, subscriber) => {
+    const content = course.content[subscriber.position-1].material
+    const subject = `Maillux : Day 1 ${ course.title }`
+    return postmail(subscriber.email,subject,content)
+}
