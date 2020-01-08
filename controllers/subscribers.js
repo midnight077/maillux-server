@@ -1,5 +1,5 @@
 const Course = require('../models/Course');
-const {sendVerificationMail,sendVerificationSuccessfulMail} = require('../config/email/utils')
+const {sendVerificationMail,sendVerificationSuccessfulMail,sendFirstMail} = require('../config/email/utils')
 
 exports.getSubscribers = async (req, res) => {
     try {
