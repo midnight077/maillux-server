@@ -40,6 +40,15 @@ exports.addSubscriber = async (req, res) => {
     }
 };
 
+const timeCheck = () => {
+    const d1 = new Date()
+    const d2 = new Date()
+    d2.setHours(8)
+    d2.setMinutes(0)
+    return d1>d2
+}
+console.log(timeCheck())
+
 exports.verifySubscriber = async (req, res) => {
     try {
         const course = await Course.findOne({ _id: req.params.courseId });
