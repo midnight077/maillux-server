@@ -7,16 +7,20 @@ const CourseSchema = new mongoose.Schema({
         unique : false,
         trim :true
     },
+    isFirstSave:{
+        type : Boolean,
+        default : true
+    },
     duration:{
         type : Number,
         required : [true, 'Please add the course duration (days)']
-    },
-    format:{
-        type : Number, // Morning : 0, Evening : 1, Both : 2
-        required : true
-    },
+    }, 
     content:{
         type : []
+    },
+    isPublished:{
+        type : Boolean,
+        default : false
     },
     subscribers:[SubscriberSchema],
     owner:{
