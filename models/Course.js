@@ -31,8 +31,12 @@ const CourseSchema = new mongoose.Schema({
 })
 
 CourseSchema.pre('save', async function(next){
-    if(this.format === 2)  this.content =  Array(this.duration).fill([{ material : '' }, { material : '' }])
-    else this.content = Array(this.duration).fill([{ material : '' }])
+    console.log(this.isFirstSave)
+    if(this.isFirstSave){
+        this.content = Array(this.duration).fill([{ material : 'hey wow' }])
+         this.isFirstSave = false
+    } 
+   
     next()
 })
 
