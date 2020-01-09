@@ -11,9 +11,7 @@ exports.sendVerificationMail = async (course, subscriber) => {
         course.title
     } <br/> The course duration is ${
         course.duration
-    } days, you will receive the course material ${
-        course.format === 2 ? 'twice' : 'once'
-    } a day.<br/><br/><a href="http://127.0.0.1:8800/api/courses/${
+    } days.<br/><br/><a href="http://127.0.0.1:8800/api/courses/${
         course._id
     }/subscribers/${
         subscriber._id
@@ -22,7 +20,7 @@ exports.sendVerificationMail = async (course, subscriber) => {
 };
 
 exports.sendFirstMail = async (course, subscriber) => {
-    const content = course.content[subscriber.position-1].material
+    const content = course.content[subscriber.position-1][0].material
     const subject = `Maillux : Day 1 ${ course.title }`
     return postmail(subscriber.email,subject,content)
 }
