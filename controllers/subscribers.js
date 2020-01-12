@@ -1,5 +1,9 @@
 const Course = require('../models/Course');
-const {sendVerificationMail,sendVerificationSuccessfulMail,sendFirstMail} = require('../config/email/utils')
+const {
+    sendVerificationMail,
+    sendVerificationSuccessfulMail,
+    sendFirstMail
+} = require('../config/email/utils');
 
 exports.getSubscribers = async (req, res) => {
     try {
@@ -71,18 +75,21 @@ exports.verifySubscriber = async (req, res) => {
             s++;
         }
         if (s == course.subscribers.length) throw 'Subscriber not found!';
-        const info = await sendVerificationSuccessfulMail(course,course.subscribers[s])
-        console.log(info)
-     
-        if(timeCheck()) {
-            const info = await sendFirstMail(course, course.subscribers[s])
-            console.log(info)
-            course.subscribers[s].position += 1
+        const info = await sendVerificationSuccessfulMail(
+            course,
+            course.subscribers[s]
+        );
+        console.log(info);
+
+        if (timeCheck()) {
+            const info = await sendFirstMail(course, course.subscribers[s]);
+            console.log(info);
+            course.subscribers[s].position += 1;
         }
         course.save();
         return res.end('Email verification Successful!');
     } catch (error) {
-        console.log(error)
+        console.log(error);
         return res.end(error);
     }
 };
