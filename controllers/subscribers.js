@@ -22,12 +22,21 @@ exports.addSubscriber = async (req, res) => {
             name: req.body.name,
             email: req.body.email
         };
+        const currSubs = [];
+        course.subscribers.forEach((item) => {
+            currSubs.push(item.email);
+        });
+        if (currSubs.includes(subscriber.email)) {
+            throw 'Already Subscribed!';
+        }
         course.subscribers.push(subscriber);
-       
+
         const info = await sendVerificationMail(
             course,
             course.subscribers[course.subscribers.length - 1]
         );
+
+        course.markModified('subscribers');
         course.save();
         console.log(info);
         return res.status(201).json({
@@ -36,18 +45,18 @@ exports.addSubscriber = async (req, res) => {
         });
     } catch (err) {
         console.log(err);
-        res.status(500).json({ error: 'Server Error' });
+        res.status(500).json({ err });
     }
 };
 
 const timeCheck = () => {
-    const d1 = new Date()
-    const d2 = new Date()
-    d2.setHours(8)
-    d2.setMinutes(0)
-    return d1>d2
-}
-console.log(timeCheck())
+    const d1 = new Date();
+    const d2 = new Date();
+    d2.setHours(8);
+    d2.setMinutes(0);
+    return d1 > d2;
+};
+console.log(timeCheck());
 
 exports.verifySubscriber = async (req, res) => {
     try {
