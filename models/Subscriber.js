@@ -1,26 +1,24 @@
 const mongoose = require('mongoose');
 exports.SubscriberSchema = new mongoose.Schema({
-    name:{
+    name: {
         type: String,
         required: [true, 'Please add your name'],
-        trim :true
+        trim: true
     },
-    email:{
-        type : String,
-        required : true,
-        unique : true,
-        sparse : true
+    email: {
+        type: String,
+        required: true
     },
-    isVerified:{
-        type : Boolean,
+    isVerified: {
+        type: Boolean,
         default: false
     },
-    position:{
-        type : Number,
-        default : 1
+    position: {
+        type: Number,
+        default: 1
     },
-    createdAt:{
-        type:Date,
-        default:Date.now
+    createdAt: {
+        type: Date,
+        default: Date.now
     }
-})
+});
