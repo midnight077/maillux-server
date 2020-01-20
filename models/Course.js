@@ -1,47 +1,54 @@
 const mongoose = require('mongoose');
-const { SubscriberSchema } = require('../models/Subscriber')
+const { SubscriberSchema } = require('../models/Subscriber');
 const CourseSchema = new mongoose.Schema({
-    title:{
+    title: {
         type: String,
         required: [true, 'Please add the course title'],
-        unique : false,
-        trim :true
+        unique: false,
+        trim: true
     },
-    isFirstSave:{
-        type : Boolean,
-        default : true
+    isFirstSave: {
+        type: Boolean,
+        default: true
     },
-    duration:{
-        type : Number,
-        required : [true, 'Please add the course duration (days)']
-    }, 
-    content:{
-        type : []
+    duration: {
+        type: Number,
+        required: [true, 'Please add the course duration (days)']
     },
-    isPublished:{
-        type : Boolean,
-        default : false
+    content: {
+        type: []
     },
-    subscribers:[SubscriberSchema],
-    owner:{
-        type : mongoose.Schema.Types.ObjectId,
-        ref : 'User',
-        select : false
+    isPublished: {
+        type: Boolean,
+        default: false
     },
-    createdAt:{
-        type:Date,
-        default:Date.now
+    subscribers: [SubscriberSchema],
+    author: {
+        type: String,
+        default: ''
+    },
+    description: {
+        type: String
+    },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        select: false
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
     }
-})
+});
 
-CourseSchema.pre('save', async function(next){
-    console.log(this.isFirstSave)
-    if(this.isFirstSave){
-        this.content = Array(this.duration).fill([{ material : 'hey wow' }])
-         this.isFirstSave = false
-    } 
-   
-    next()
-})
+CourseSchema.pre('save', async function(next) {
+    console.log(this.isFirstSave);
+    if (this.isFirstSave) {
+        this.content = Array(this.duration).fill([{ material: 'hey wow' }]);
+        this.isFirstSave = false;
+    }
 
-module.exports = mongoose.model('Course', CourseSchema)
+    next();
+});
+
+module.exports = mongoose.model('Course', CourseSchema);
