@@ -62,20 +62,20 @@ exports.publishCourse = async (req, res) => {
     }
 };
 exports.getCourse = async (req, res) => {
-    const token = req.headers['x-access-token'];
-    let decodedRes = await verifyJWT(token);
-    if (decodedRes.error) res.json(decodedRes);
-    else {
-        try {
-            const course = await Course.findById(req.params.courseId);
-            return res.status(201).json({
-                success: true,
-                data: course
-            });
-        } catch (err) {
-            console.log(err);
-            res.status(500).json({ error: 'Server Error' });
-        }
+    try {
+        const course = await Course.findById(req.params.courseId);
+        const data = { ...course._doc };
+        data.isFirstSave = undefined;
+        data.content = undefined;
+        data.isPublished = undefined;
+        data.subscribers = data.subscribers.length;
+        return res.status(201).json({
+            success: true,
+            data
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: 'Server Error' });
     }
 };
 exports.editMaterial = async (req, res) => {
