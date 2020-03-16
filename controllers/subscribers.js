@@ -48,8 +48,15 @@ exports.addSubscriber = async (req, res) => {
       data: course.subscribers[course.subscribers.length - 1]
     });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ err });
+    switch (err.code) {
+      case "EDNS":
+        res.status(200).json({ err: "Network Error" });
+        break;
+
+      default:
+        res.status(500).json({ err });
+        break;
+    }
   }
 };
 
