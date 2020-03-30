@@ -8,7 +8,7 @@ exports.getCourses = async (req, res, next) => {
       success: true,
       count: courses.length,
       data: courses
-        .filter((item) => !item.isPublished)
+        .filter((item) => item.isPublished)
         .map((item) => {
           return {
             title: item.title,
@@ -52,7 +52,7 @@ exports.addCourse = async (req, res) => {
       });
     } catch (err) {
       console.log(err);
-      res.status(500).json({ error: "Server Error" });
+      res.status(500).json({ err });
     }
   }
 };
@@ -64,23 +64,30 @@ exports.publishCourse = async (req, res) => {
   else {
     try {
       const course = await Course.findById(req.params.courseId);
-      course.isPublished = true;
+      const fetchedUser = await User.findById(decodedRes.id);
+      if (fetchedUser.username != course.author)
+        throw "Only author can perform this operation";
+      if (!course.isPublished)
+        course.content.forEach((day) => {
+          if (!day.material) throw "first fill the content for each day.";
+        });
+      course.isPublished = !course.isPublished;
       course.save();
       return res.status(201).json({
         success: true,
         data: course
       });
     } catch (err) {
-      console.log(err);
-      res.status(500).json({ error: "Server Error" });
+      res.status(200).json({ err });
     }
   }
 };
 exports.getCourse = async (req, res) => {
   try {
     const course = await Course.findById(req.params.courseId);
-    const data = { ...course._doc };
+    const data = { ...course._doc, titles: [] };
     data.isFirstSave = undefined;
+    data.content.forEach((day) => data.titles.push(day.title));
     data.content = undefined;
     data.isPublished = undefined;
     data.subscribers = data.subscribers.length;

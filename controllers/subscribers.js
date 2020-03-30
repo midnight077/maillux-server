@@ -67,10 +67,12 @@ const timeCheck = () => {
   d2.setMinutes(0);
   return d1 > d2;
 };
+
 exports.verifySubscriber = async (req, res) => {
   try {
     const course = await Course.findOne({ _id: req.params.courseId });
     let s = 0;
+    console.log(course);
     while (s < course.subscribers.length) {
       if (course.subscribers[s]._id == req.params.subscriberId) {
         if (course.subscribers[s].isVerified) throw "Already verified";
