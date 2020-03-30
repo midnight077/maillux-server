@@ -144,3 +144,136 @@ exports.editMaterial = async (req, res) => {
     }
   }
 };
+
+exports.editTitle = async (req, res) => {
+  const token = req.headers["x-access-token"];
+  let decodedRes = await verifyJWT(token);
+  console.log(decodedRes);
+  if (decodedRes.error) res.json(decodedRes);
+  else {
+    try {
+      const course = await Course.findById(req.params.courseId);
+      const fetchedUser = await User.findById(decodedRes.id);
+      if (fetchedUser.username != course.author)
+        throw "Only author can perform this operation";
+      course.title = req.body.title;
+      course.markModified("title");
+      const i = await course.save();
+      return res.status(201).json({
+        success: true,
+        data: i
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: "Server Error" });
+    }
+  }
+};
+
+exports.addDay = async (req, res) => {
+  const token = req.headers["x-access-token"];
+  let decodedRes = await verifyJWT(token);
+  console.log(decodedRes);
+  if (decodedRes.error) res.json(decodedRes);
+  else {
+    try {
+      const course = await Course.findById(req.params.courseId);
+      const fetchedUser = await User.findById(decodedRes.id);
+      if (fetchedUser.username != course.author)
+        throw "Only author can perform this operation";
+      course.content.push({ title: "", material: "" });
+      course.duration = course.content.length;
+      course.isPublished = false;
+      course.markModified("content");
+      const i = await course.save();
+      return res.status(201).json({
+        success: true,
+        data: i
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: "Server Error" });
+    }
+  }
+};
+
+exports.toggleWrap = async (req, res) => {
+  const token = req.headers["x-access-token"];
+  let decodedRes = await verifyJWT(token);
+  console.log(decodedRes);
+  if (decodedRes.error) res.json(decodedRes);
+  else {
+    try {
+      const course = await Course.findById(req.params.courseId);
+      const fetchedUser = await User.findById(decodedRes.id);
+      if (fetchedUser.username != course.author)
+        throw "Only author can perform this operation";
+      course.content[req.body.day - 1].wrap = !course.content[req.body.day - 1]
+        .wrap;
+      course.markModified("content");
+      const i = await course.save();
+      return res.status(201).json({
+        success: true,
+        data: i
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: "Server Error" });
+    }
+  }
+};
+
+exports.deleteDay = async (req, res) => {
+  const token = req.headers["x-access-token"];
+  let decodedRes = await verifyJWT(token);
+  if (decodedRes.error) res.json(decodedRes);
+  else {
+    try {
+      const course = await Course.findById(req.params.courseId);
+      const fetchedUser = await User.findById(decodedRes.id);
+      if (fetchedUser.username != course.author)
+        throw "Only author can perform this operation";
+      if (course.subscribers.length)
+        throw "You can only delete a day if the course have zero subscribers";
+      course.content.splice(req.body.day - 1, 1);
+      course.markModified("content");
+
+      course.duration = course.content.length;
+      course.markModified("duration");
+      const i = await course.save();
+      return res.status(201).json({
+        success: true,
+        data: i
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: "Server Error" });
+    }
+  }
+};
+
+exports.deleteCourse = async (req, res) => {
+  const token = req.headers["x-access-token"];
+  let decodedRes = await verifyJWT(token);
+  if (decodedRes.error) res.json(decodedRes);
+  else {
+    try {
+      const course = await Course.findById(req.params.courseId);
+      if (!course) throw "This course is not available";
+      const fetchedUser = await User.findById(decodedRes.id);
+      if (fetchedUser.username != course.author)
+        throw "Only author can perform this operation";
+      fetchedUser.courses.splice(fetchedUser.courses.indexOf(course._id), 1);
+      await fetchedUser.save();
+      await Course.findByIdAndRemove(req.params.courseId);
+
+      return res.status(201).json({
+        success: true,
+        data: "done"
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: "Server Error" });
+    }
+  }
+};
