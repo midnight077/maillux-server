@@ -44,7 +44,11 @@ const CourseSchema = new mongoose.Schema({
 CourseSchema.pre("save", async function(next) {
   console.log(this.isFirstSave);
   if (this.isFirstSave) {
-    this.content = Array(this.duration).fill({ title: "", material: "" });
+    this.content = Array(this.duration).fill({
+      title: "",
+      material: "",
+      wrap: false
+    });
     this.isFirstSave = false;
   }
 
