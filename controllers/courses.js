@@ -94,6 +94,31 @@ exports.getCourse = async (req, res) => {
   }
 };
 
+exports.editDescription = async (req, res) => {
+  const token = req.headers["x-access-token"];
+  let decodedRes = await verifyJWT(token);
+  if (decodedRes.error) res.json(decodedRes);
+  else {
+    try {
+      const course = await Course.findById(req.params.courseId);
+      const fetchedUser = await User.findById(decodedRes.id);
+      if (fetchedUser.username != course.author)
+        throw "Only author can perform this operation";
+      course.description = req.body.description;
+      course.markModified("description");
+      const i = await course.save();
+      console.log(i.content);
+      return res.status(201).json({
+        success: true,
+        data: i
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: "Server Error" });
+    }
+  }
+};
+
 exports.editMaterial = async (req, res) => {
   const token = req.headers["x-access-token"];
   let decodedRes = await verifyJWT(token);
@@ -101,6 +126,9 @@ exports.editMaterial = async (req, res) => {
   else {
     try {
       const course = await Course.findById(req.params.courseId);
+      const fetchedUser = await User.findById(decodedRes.id);
+      if (fetchedUser.username != course.author)
+        throw "Only author can perform this operation";
       course.content[req.body.day - 1].material = req.body.material;
       course.content[req.body.day - 1].title = req.body.title;
       course.markModified("content");
