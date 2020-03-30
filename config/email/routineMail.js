@@ -2,7 +2,7 @@ const Course = require("../../models/Course");
 const { postmail } = require("./postmail");
 exports.routineMail = async () => {
   try {
-    const courses = await Course.find({ isPublished: false });
+    const courses = await Course.find({ isPublished: true });
     courses.forEach((course) => {
       let obj = {};
       course.subscribers.forEach((sub) => {
@@ -20,7 +20,10 @@ exports.routineMail = async () => {
           const subject = `Maillux : Day ${pos} ${course.title} | ${
             course.content[pos - 1].title
           }`;
-          const content = course.content[pos - 1].material;
+          let content;
+          course.content[pos - 1].wrap
+            ? (content = `<pre>${course.content[pos - 1].material}</pre>`)
+            : (course = course.content[pos - 1].material);
           try {
             const info = await postmail(mailId, subject, content, bcc);
             const sent = info.accepted;
