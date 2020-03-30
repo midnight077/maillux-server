@@ -12,7 +12,14 @@ exports.sendVerificationMail = async (course, subscriber) => {
 };
 
 exports.sendFirstMail = async (course, subscriber) => {
-  const content = course.content[subscriber.position - 1][0].material;
-  const subject = `Maillux : Day 1 ${course.title}`;
+  let content;
+  course.content[subscriber.position - 1].wrap
+    ? (content = `<pre>${
+        course.content[subscriber.position - 1].material
+      }</pre>`)
+    : (course = course.content[subscriber.position - 1].material);
+  const subject = `Maillux : Day 1 ${course.title} | ${
+    course.content[subscriber.position - 1].material
+  }`;
   return postmail(subscriber.email, subject, content);
 };
