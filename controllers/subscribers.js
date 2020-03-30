@@ -86,7 +86,7 @@ exports.verifySubscriber = async (req, res) => {
     );
     console.log(info);
 
-    if (timeCheck()) {
+    if (timeCheck() && course.content.length) {
       const info = await sendFirstMail(course, course.subscribers[s]);
       console.log(info);
       course.subscribers[s].position += 1;
@@ -95,6 +95,6 @@ exports.verifySubscriber = async (req, res) => {
     return res.end("Email verification Successful!");
   } catch (error) {
     console.log(error);
-    return res.end(error);
+    return res.send(error);
   }
 };
