@@ -22,7 +22,7 @@ const timeToStart = () => {
   if (next - curr < 0) return next - curr + 86400000;
   return next - curr;
 };
-
+console.log(timeToStart());
 (async () => {
   setTimeout(async () => {
     const resp = await routineMail();
