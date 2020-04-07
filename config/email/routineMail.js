@@ -6,10 +6,12 @@ exports.routineMail = async () => {
     courses.forEach((course) => {
       let obj = {};
       course.subscribers.forEach((sub) => {
-        if (sub.position in obj) {
-          obj[sub.position].push(sub.email);
-        } else {
-          obj[sub.position] = [sub.email];
+        if (sub.isVerified) {
+          if (sub.position in obj) {
+            obj[sub.position].push(sub.email);
+          } else {
+            obj[sub.position] = [sub.email];
+          }
         }
       });
       Object.keys(obj).forEach(async (pos) => {
@@ -22,8 +24,10 @@ exports.routineMail = async () => {
           }`;
           let content;
           course.content[pos - 1].wrap
-            ? (content = `<pre>${course.content[pos - 1].material}</pre>`)
-            : (course = course.content[pos - 1].material);
+            ? (content = `<pre style="font-family:inherit"><code style="font-family:inherit">${
+                course.content[pos - 1].material
+              }</code></pre>`)
+            : (content = course.content[pos - 1].material);
           try {
             const info = await postmail(mailId, subject, content, bcc);
             const sent = info.accepted;
