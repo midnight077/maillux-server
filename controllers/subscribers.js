@@ -2,7 +2,7 @@ const Course = require("../models/Course");
 const {
   sendVerificationMail,
   sendVerificationSuccessfulMail,
-  sendFirstMail
+  sendFirstMail,
 } = require("../config/email/utils");
 
 exports.getSubscribers = async (req, res) => {
@@ -11,7 +11,7 @@ exports.getSubscribers = async (req, res) => {
     return res.status(200).json({
       success: true,
       count: course.subscribers.length,
-      data: course.subscribers
+      data: course.subscribers,
     });
   } catch (err) {
     console.log(err);
@@ -24,7 +24,7 @@ exports.addSubscriber = async (req, res) => {
     const course = await Course.findOne({ _id: req.params.courseId });
     const subscriber = {
       name: req.body.name,
-      email: req.body.email
+      email: req.body.email,
     };
     const currSubs = [];
     course.subscribers.forEach((item) => {
@@ -45,7 +45,7 @@ exports.addSubscriber = async (req, res) => {
     console.log(info);
     return res.status(201).json({
       success: true,
-      data: course.subscribers[course.subscribers.length - 1]
+      data: course.subscribers[course.subscribers.length - 1],
     });
   } catch (err) {
     switch (err.code) {
@@ -67,7 +67,25 @@ const timeCheck = () => {
   d2.setMinutes(0);
   return d1 > d2;
 };
+exports.unsubscribe = async (req, res) => {
+  try {
+    const course = await Course.findOne({ _id: req.params.courseId });
+    let s = 0;
+    while (s < course.subscribers.length) {
+      if (course.subscribers[s]._id == req.params.subscriberId) {
+        course.subscribers.splice(s, 1);
+        break;
+      }
+      s++;
+    }
 
+    course.markModified("subscribers");
+    course.save();
+    return res.end("Unsubscribed!");
+  } catch (error) {
+    res.send(error);
+  }
+};
 exports.verifySubscriber = async (req, res) => {
   try {
     const course = await Course.findOne({ _id: req.params.courseId });
