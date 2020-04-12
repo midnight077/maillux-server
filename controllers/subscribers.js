@@ -11,7 +11,15 @@ exports.getSubscribers = async (req, res) => {
     return res.status(200).json({
       success: true,
       count: course.subscribers.length,
-      data: course.subscribers,
+      data: course.subscribers.map((item) => {
+        return {
+          isVerified: item.isVerified,
+          position: item.position,
+          createdAt: item.createdAt,
+          name: item.name,
+          email: item.email,
+        };
+      }),
     });
   } catch (err) {
     console.log(err);
