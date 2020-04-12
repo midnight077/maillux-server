@@ -2,7 +2,7 @@ const { postmail } = require("./postmail");
 
 exports.sendVerificationSuccessfulMail = async (course, subscriber) => {
   const content = `Hey ${subscriber.name},<br/> Your email has been verified successfully, 
-you have successfully subscribed to ${course.title}, <br/> You will be receiving Day 1 Course Contents Soon.<br/>Best of luck,<br>${course.author}`;
+you have successfully subscribed to ${course.title}, <br/> You will be receiving Day 1 Course Contents Soon.<br/>Best of luck,<br>${course.author} <br><br>If you don't like the course you can <a href="https://maillux.herokuapp.com/api/courses/${course._id}/subscribers/${subscriber._id}/unsubscribe">Unsubscribe this course</a>`;
   return postmail(subscriber.email, `Maillux : ${course.title}`, content);
 };
 
