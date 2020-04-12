@@ -17,10 +17,10 @@ exports.getCourses = async (req, res, next) => {
             subscribers: item.subscribers.length,
             description: item.description,
             createdAt: item.createdAt,
-            _id: item._id
+            _id: item._id,
           };
         })
-        .sort((a, b) => b.createdAt - a.createdAt)
+        .sort((a, b) => b.createdAt - a.createdAt),
     });
   } catch (err) {
     console.log(err);
@@ -41,14 +41,14 @@ exports.addCourse = async (req, res) => {
       console.log(fetchedUser);
       const course = await Course.create({
         ...req.body.content,
-        author: fetchedUser.username
+        author: fetchedUser.username,
       });
       console.log(course);
       fetchedUser.courses.push(course);
       fetchedUser.save();
       return res.status(201).json({
         success: true,
-        data: course
+        data: course,
       });
     } catch (err) {
       console.log(err);
@@ -75,7 +75,7 @@ exports.publishCourse = async (req, res) => {
       course.save();
       return res.status(201).json({
         success: true,
-        data: course
+        data: course,
       });
     } catch (err) {
       res.status(200).json({ err });
@@ -93,7 +93,7 @@ exports.getCourse = async (req, res) => {
     data.subscribers = data.subscribers.length;
     return res.status(201).json({
       success: true,
-      data
+      data,
     });
   } catch (err) {
     console.log(err);
@@ -117,7 +117,7 @@ exports.editDescription = async (req, res) => {
       console.log(i.content);
       return res.status(201).json({
         success: true,
-        data: i
+        data: i,
       });
     } catch (err) {
       console.log(err);
@@ -143,7 +143,7 @@ exports.editMaterial = async (req, res) => {
       console.log(i.content);
       return res.status(201).json({
         success: true,
-        data: i
+        data: i,
       });
     } catch (err) {
       console.log(err);
@@ -168,7 +168,7 @@ exports.editTitle = async (req, res) => {
       const i = await course.save();
       return res.status(201).json({
         success: true,
-        data: i
+        data: i,
       });
     } catch (err) {
       console.log(err);
@@ -195,7 +195,7 @@ exports.addDay = async (req, res) => {
       const i = await course.save();
       return res.status(201).json({
         success: true,
-        data: i
+        data: i,
       });
     } catch (err) {
       console.log(err);
@@ -221,7 +221,7 @@ exports.toggleWrap = async (req, res) => {
       const i = await course.save();
       return res.status(201).json({
         success: true,
-        data: i
+        data: i,
       });
     } catch (err) {
       console.log(err);
@@ -230,6 +230,13 @@ exports.toggleWrap = async (req, res) => {
   }
 };
 
+const activeSubs = (course) => {
+  let subs = 0;
+  course.subscribers.forEach((sub) => {
+    if (sub.position <= course.duration) ++subs;
+  });
+  return subs;
+};
 exports.deleteDay = async (req, res) => {
   const token = req.headers["x-access-token"];
   let decodedRes = await verifyJWT(token);
@@ -240,8 +247,8 @@ exports.deleteDay = async (req, res) => {
       const fetchedUser = await User.findById(decodedRes.id);
       if (fetchedUser.username != course.author)
         throw "Only author can perform this operation";
-      if (course.subscribers.length)
-        throw "You can only delete a day if the course have zero subscribers";
+      if (activeSubs > 0)
+        throw "You can only delete a day if the course have zero active subscribers";
       course.content.splice(req.body.day - 1, 1);
       course.markModified("content");
 
@@ -250,7 +257,7 @@ exports.deleteDay = async (req, res) => {
       const i = await course.save();
       return res.status(201).json({
         success: true,
-        data: i
+        data: i,
       });
     } catch (err) {
       console.log(err);
@@ -276,7 +283,7 @@ exports.deleteCourse = async (req, res) => {
 
       return res.status(201).json({
         success: true,
-        data: "done"
+        data: "done",
       });
     } catch (err) {
       console.log(err);
