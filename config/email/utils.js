@@ -17,9 +17,9 @@ exports.sendFirstMail = async (course, subscriber) => {
     ? (content = `<pre style="font-family:inherit"><code style="font-family:inherit">${
         course.content[subscriber.position - 1].material
       }</code></pre>`)
-    : (course = course.content[subscriber.position - 1].material);
+    : (content = course.content[subscriber.position - 1].material);
   const subject = `Maillux : Day 1 ${course.title} | ${
-    course.content[subscriber.position - 1].material
+    course.content[subscriber.position - 1].title
   }`;
   return postmail(subscriber.email, subject, content);
 };
